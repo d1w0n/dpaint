@@ -1,78 +1,8 @@
 import pygame
 import csv
 import os
-
-class Text:
-    def __init__(self, window, x, y, name, text, size, color):
-        self._window = window 
-        self.x = x
-        self.y = y
-        self.name = name
-        self.size = size
-        self.color = color
-        self.font = pygame.font.Font(None, size)
-        self._text_surface = self.font.render(text, True, self.color)
-
-    def render(self):
-        self._window.blit(self._text_surface, (self.x, self.y))
-
-    def set_text(self, text: str):
-        self._text_surface = self.font.render(text, True, self.color)
-
-class Bar:
-    def __init__(self, window, x, y, width, height, name, color):
-        self._window = window
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.name = name
-        self.color = color
-
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-
-    def render(self):
-        pygame.draw.rect(self._window, self.color, self.rect)
-
-class Paint:
-    def __init__(self, window, x_init, y_init, x, y, size, color):
-        self._window = window
-        self.x_init = x_init
-        self.y_init = y_init if y_init >= 0 else 0
-        self.x = x
-        self.y = y if y >= 0 else 0
-        self.size = size
-        self.color = color
-
-    def render(self, zoom, y_offset):
-        pygame.draw.circle(self._window, self.color, \
-            (
-                round(self.x_init * zoom + (1280 / 2) * (1 - zoom)), \
-                round((self.y_init + y_offset) * zoom + (960 / 2) * (1 - zoom))
-            ), \
-            round(((self.size / 2) - 1) * zoom)
-        )
-
-        pygame.draw.line(self._window, self.color, \
-            (
-                round(self.x_init * zoom + (1280 / 2) * (1 - zoom)), \
-                round((self.y_init + y_offset) * zoom + (960 / 2) * (1 - zoom))
-            ), \
-            (
-                round(self.x * zoom + (1280 / 2) * (1 - zoom)), \
-                round((self.y + y_offset) * zoom + (960 / 2) * (1 - zoom))
-            ), \
-            round(self.size * zoom)
-        )
-        
-        pygame.draw.circle(self._window, self.color, \
-            (
-                round(self.x * zoom) + ((1280 / 2) * (1 - zoom)), \
-                round((self.y + y_offset) * zoom + (960 / 2) * (1 - zoom))
-            ), \
-            round(((self.size / 2) - 1) * zoom)
-        )
-    # TODO fix magic numbers (after camera class)
+from scripts.paint import Paint
+from scripts.ui import Text, Bar
 
 pygame.init()
 
