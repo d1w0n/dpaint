@@ -10,32 +10,31 @@ class Paint:
         self.size = size
         self.color = color
 
-    def render(self, zoom, y_offset):
+    def render(self, x_offset, y_offset, camera_width, camera_height, camera_zoom):
         pygame.draw.circle(self._window, self.color, \
             (
-                round(self.x_init * zoom + (1280 / 2) * (1 - zoom)), \
-                round((self.y_init + y_offset) * zoom + (960 / 2) * (1 - zoom))
+                round((self.x_init + x_offset) * camera_zoom + (camera_width / 2) * (1 - camera_zoom)), \
+                round((self.y_init + y_offset) * camera_zoom + (camera_height / 2) * (1 - camera_zoom))
             ), \
-            round(((self.size / 2) - 1) * zoom)
+            round(((self.size / 2) - 1) * camera_zoom)
         )
 
         pygame.draw.line(self._window, self.color, \
             (
-                round(self.x_init * zoom + (1280 / 2) * (1 - zoom)), \
-                round((self.y_init + y_offset) * zoom + (960 / 2) * (1 - zoom))
+                round((self.x_init + x_offset) * camera_zoom + (camera_width / 2) * (1 - camera_zoom)), \
+                round((self.y_init + y_offset) * camera_zoom + (camera_height / 2) * (1 - camera_zoom))
             ), \
             (
-                round(self.x * zoom + (1280 / 2) * (1 - zoom)), \
-                round((self.y + y_offset) * zoom + (960 / 2) * (1 - zoom))
+                round((self.x + x_offset) * camera_zoom + (camera_width / 2) * (1 - camera_zoom)), \
+                round((self.y + y_offset) * camera_zoom + (camera_height / 2) * (1 - camera_zoom))
             ), \
-            round(self.size * zoom)
+            round(self.size * camera_zoom)
         )
         
         pygame.draw.circle(self._window, self.color, \
             (
-                round(self.x * zoom) + ((1280 / 2) * (1 - zoom)), \
-                round((self.y + y_offset) * zoom + (960 / 2) * (1 - zoom))
+                round((self.x + x_offset) * camera_zoom) + ((camera_width / 2) * (1 - camera_zoom)), \
+                round((self.y + y_offset) * camera_zoom + (camera_height / 2) * (1 - camera_zoom))
             ), \
-            round(((self.size / 2) - 1) * zoom)
+            round(((self.size / 2) - 1) * camera_zoom)
         )
-    # TODO fix magic numbers (after camera class)
