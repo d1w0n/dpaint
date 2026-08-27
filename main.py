@@ -21,7 +21,7 @@ ui = [
     Bar(window, 0, 0, width, 25, "MenuBar", (200, 200, 200)),
     Text(window, 0, 0, "PenText", "Pen Size: " + str(pen_size) + " (Q-/W+)", 32, (0, 0, 0))
     ]
-camera = Camera(window, 0, 0, width, height, 0.5)
+camera = Camera(window, 0, 0, width, height, 1.0)
 
 save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "save.csv")
     
@@ -30,12 +30,12 @@ if os.path.exists(save_path):
         with open(save_path, "r") as save:
             csv_reader = csv.DictReader(save)
             for row in csv_reader:
-                paint.append(Paint(window, \
-                    int(row["x_init"]), \
-                    int(row["y_init"]), \
-                    int(row["x"]), \
-                    int(row["y"]), \
-                    int(row["size"]), \
+                paint.append(Paint(window,
+                    int(row["x_init"]),
+                    int(row["y_init"]),
+                    int(row["x"]),
+                    int(row["y"]),
+                    int(row["size"]),
                     (int(row["red"]), int(row["green"]), int(row["blue"]))
                     ))
     except:
@@ -103,17 +103,24 @@ while running:
     if pressed:
         if was_pressed:
             paint.append(Paint(
-                window, \
-                old_mouse_x + camera.x, \
-                old_mouse_y + camera.y, \
-                mouse_x + camera.x, \
-                mouse_y + camera.y, \
+                window,
+                (old_mouse_x - camera.width / 2) / camera.zoom + camera.x,
+                (old_mouse_y - camera.height / 2) / camera.zoom + camera.y,
+                (mouse_x - camera.width / 2) / camera.zoom + camera.x,
+                (mouse_y - camera.height / 2) / camera.zoom + camera.y,
                 pen_size, (0, 0, 0)
                 ))
 
         else:
-            paint.append(Paint(window, mouse_x + camera.x, mouse_y + camera.y, mouse_x + camera.x, mouse_y + camera.y, pen_size, (0, 0, 0)))
-
+            paint.append(Paint(
+                window,
+                (mouse_x - camera.width / 2) / camera.zoom + camera.x,
+                (mouse_y - camera.height / 2) / camera.zoom + camera.y,
+                (mouse_x - camera.width / 2) / camera.zoom + camera.x,
+                (mouse_y - camera.height / 2) / camera.zoom + camera.y,
+                pen_size, (0, 0, 0)
+                ))
+            
     was_pressed = pressed
     old_mouse_x, old_mouse_y = mouse_x, mouse_y
 
