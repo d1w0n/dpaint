@@ -14,7 +14,6 @@ running = True
 pen_size = 10
 key_z = False
 key_x = False
-# TODO create camera class for camera x and y with zoom
 
 paint = []
 ui = [
@@ -44,6 +43,8 @@ else:
     open(save_path, mode="w", newline="")
 
 old_mouse_x, old_mouse_y = pygame.mouse.get_pos()
+old_camera_zoom = camera.zoom
+old_camera_x, old_camera_y = camera.x, camera.y
 was_pressed = False
 
 while running:
@@ -104,8 +105,8 @@ while running:
         if was_pressed:
             paint.append(Paint(
                 window,
-                (old_mouse_x - camera.width / 2) / camera.zoom + camera.x,
-                (old_mouse_y - camera.height / 2) / camera.zoom + camera.y,
+                (old_mouse_x - camera.width / 2) / old_camera_zoom + old_camera_x,
+                (old_mouse_y - camera.height / 2) / old_camera_zoom + old_camera_y,
                 (mouse_x - camera.width / 2) / camera.zoom + camera.x,
                 (mouse_y - camera.height / 2) / camera.zoom + camera.y,
                 pen_size, (0, 0, 0)
@@ -123,6 +124,8 @@ while running:
             
     was_pressed = pressed
     old_mouse_x, old_mouse_y = mouse_x, mouse_y
+    old_camera_zoom = camera.zoom
+    old_camera_x, old_camera_y = camera.x, camera.y
 
     for element in ui:
         if element.name == "MenuBar":
