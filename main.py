@@ -5,6 +5,12 @@ from scripts.paint import Paint
 from scripts.ui import Text, Bar
 from scripts.camera import Camera
 
+def create_menu_text(camera_zoom, camera_x, camera_y, pen_size, pen_color):
+    return "Zoom Level: " + str(round(camera_zoom * 100)) + "% (Q-/W+), " \
+            "Coordinates: (" + str(camera_x) + ", " + str(camera_y) + ") (WASD), " \
+            "Pen Size: " + str(pen_size) + " (Z-/X+), " \
+            "Pen Color: " + str(pen_color)
+
 pygame.init()
 
 width, height = 1280, 960
@@ -12,15 +18,16 @@ window = pygame.display.set_mode([width, height])
 clock = pygame.time.Clock()
 running = True
 pen_size = 10
+pen_color = (0, 0, 0)
 key_z = False
 key_x = False
 
 paint = []
+camera = Camera(window, 0, 0, width, height, 1.0)
 ui = [
     Bar(window, 0, 0, width, 25, "MenuBar", (200, 200, 200)),
-    Text(window, 0, 0, "PenText", "Pen Size: " + str(pen_size) + " (Q-/W+)", 32, (0, 0, 0))
+    Text(window, 5, 0, "MenuText", create_menu_text(camera.zoom, camera.x, camera.y, pen_size, pen_color), 32, (0, 0, 0))
     ]
-camera = Camera(window, 0, 0, width, height, 1.0)
 
 save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "save.csv")
     
@@ -64,9 +71,6 @@ while running:
         if not key_z:
             key_z = True
             pen_size -= 1
-            for element in ui:
-                if element.name == "PenText":
-                    element.set_text("Pen Size: " + str(pen_size) + " (Q-/W+)")
 
     else:
         key_z = False
@@ -75,9 +79,6 @@ while running:
         if not key_x:
             key_x = True
             pen_size += 1
-            for element in ui:
-                if element.name == "PenText":
-                    element.set_text("Pen Size: " + str(pen_size) + " (Q-/W+)")
 
     else:
         key_x = False
@@ -94,6 +95,11 @@ while running:
         camera.zoom -= 0.05
     if pygame.key.get_pressed()[pygame.K_e]:
         camera.zoom += 0.05
+
+    if any(pygame.key.get_pressed()):
+        for element in ui:
+            if element.name == "MenuText":
+                element.set_text(create_menu_text(camera.zoom, camera.x, camera.y, pen_size, pen_color))
 
     pressed = pygame.mouse.get_pressed()[0]
     mouse_x, mouse_y = pygame.mouse.get_pos()
