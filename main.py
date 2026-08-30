@@ -36,18 +36,13 @@ if os.path.exists(save_path):
         with open(save_path, "r") as save:
             csv_reader = csv.DictReader(save)
             for row in csv_reader:
-                paint.append(Paint(window,
-                    int(row["x_init"]),
-                    int(row["y_init"]),
-                    int(row["x"]),
-                    int(row["y"]),
-                    int(row["size"]),
-                    (int(row["red"]), int(row["green"]), int(row["blue"]))
-                    ))
+                paint.append(Paint(window, int(row["x_init"]), int(row["y_init"]), int(row["x"]), int(row["y"]), int(row["size"]), (int(row["red"]), int(row["green"]), int(row["blue"]))))
+                
     except:
         pass
+
 else:
-    open(save_path, mode="w", newline="")
+    pass
 
 old_mouse_x, old_mouse_y = pygame.mouse.get_pos()
 old_camera_zoom = camera.zoom
@@ -84,13 +79,13 @@ while running:
         key_x = False
 
     if pygame.key.get_pressed()[pygame.K_w]:
-        camera.y -= 5
+        camera.y -= round(5 / camera.zoom)
     if pygame.key.get_pressed()[pygame.K_a]:
-        camera.x -= 5
+        camera.x -= round(5 / camera.zoom)
     if pygame.key.get_pressed()[pygame.K_s]:
-        camera.y += 5
+        camera.y += round(5 / camera.zoom)
     if pygame.key.get_pressed()[pygame.K_d]:
-        camera.x += 5
+        camera.x += round(5 / camera.zoom)
     if pygame.key.get_pressed()[pygame.K_q]:
         camera.zoom -= 0.05
     if pygame.key.get_pressed()[pygame.K_e]:
@@ -111,20 +106,20 @@ while running:
         if was_pressed:
             paint.append(Paint(
                 window,
-                (old_mouse_x - camera.width / 2) / old_camera_zoom + old_camera_x,
-                (old_mouse_y - camera.height / 2) / old_camera_zoom + old_camera_y,
-                (mouse_x - camera.width / 2) / camera.zoom + camera.x,
-                (mouse_y - camera.height / 2) / camera.zoom + camera.y,
+                round((old_mouse_x - camera.width / 2) / old_camera_zoom + old_camera_x),
+                round((old_mouse_y - camera.height / 2) / old_camera_zoom + old_camera_y),
+                round((mouse_x - camera.width / 2) / camera.zoom + camera.x),
+                round((mouse_y - camera.height / 2) / camera.zoom + camera.y),
                 pen_size, (0, 0, 0)
                 ))
 
         else:
             paint.append(Paint(
                 window,
-                (mouse_x - camera.width / 2) / camera.zoom + camera.x,
-                (mouse_y - camera.height / 2) / camera.zoom + camera.y,
-                (mouse_x - camera.width / 2) / camera.zoom + camera.x,
-                (mouse_y - camera.height / 2) / camera.zoom + camera.y,
+                round((mouse_x - camera.width / 2) / camera.zoom + camera.x),
+                round((mouse_y - camera.height / 2) / camera.zoom + camera.y),
+                round((mouse_x - camera.width / 2) / camera.zoom + camera.x),
+                round((mouse_y - camera.height / 2) / camera.zoom + camera.y),
                 pen_size, (0, 0, 0)
                 ))
             
