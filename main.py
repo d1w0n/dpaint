@@ -9,7 +9,7 @@ def create_menu_text(camera_zoom, camera_x, camera_y, pen_size, pen_color):
     return "Zoom Level: " + str(round(camera_zoom * 100)) + "% (Q-/W+), " \
             "Coordinates: (" + str(camera_x) + ", " + str(camera_y) + ") (WASD), " \
             "Pen Size: " + str(pen_size) + " (Z-/X+), " \
-            "Pen Color: " + str(pen_color)
+            "Pen Color: " + str(pen_color) + " (1/2/3)"
 
 pygame.init()
 
