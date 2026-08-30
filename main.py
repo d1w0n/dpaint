@@ -21,6 +21,8 @@ pen_size = 10
 pen_color = (0, 0, 0)
 key_z = False
 key_x = False
+key_c = False
+# initialize program variables.
 
 paint = []
 camera = Camera(window, 0, 0, width, height, 1.0)
@@ -28,6 +30,12 @@ ui = [
     Bar(window, 0, 0, width, 25, "MenuBar", (200, 200, 200)),
     Text(window, 5, 0, "MenuText", create_menu_text(camera.zoom, camera.x, camera.y, pen_size, pen_color), 32, (0, 0, 0))
     ]
+# initialize program gui.
+
+for element in ui:
+    if element.name == "MenuBar":
+        ui.append(Bar(window, element.width - element.height, 0, element.height, element.height, "ColorBar", (0, 0, 0)))
+# pen color indicator.
 
 save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "save.csv")
     
@@ -43,6 +51,7 @@ if os.path.exists(save_path):
 
 else:
     pass
+# loads save.csv.
 
 old_mouse_x, old_mouse_y = pygame.mouse.get_pos()
 old_camera_zoom = camera.zoom
@@ -50,7 +59,9 @@ old_camera_x, old_camera_y = camera.x, camera.y
 was_pressed = False
 
 while running:
-    if pygame.key.get_pressed()[pygame.K_ESCAPE]:
+    key = pygame.key.get_pressed()
+
+    if key[pygame.K_ESCAPE]:
         running = False
 
     for event in pygame.event.get():
@@ -59,10 +70,10 @@ while running:
 
     window.fill((255, 255, 255))
 
-    if pygame.key.get_pressed()[pygame.K_c] and not len(paint) == 0:
+    if key[pygame.K_c] and not len(paint) == 0:
         paint.pop(len(paint) - 1)
 
-    if pygame.key.get_pressed()[pygame.K_z] and not pen_size <= 1:
+    if key[pygame.K_z] and not pen_size <= 1:
         if not key_z:
             key_z = True
             pen_size -= 1
@@ -70,7 +81,7 @@ while running:
     else:
         key_z = False
 
-    if pygame.key.get_pressed()[pygame.K_x]:
+    if key[pygame.K_x]:
         if not key_x:
             key_x = True
             pen_size += 1
@@ -78,23 +89,44 @@ while running:
     else:
         key_x = False
 
-    if pygame.key.get_pressed()[pygame.K_w]:
+    if key[pygame.K_1] and not key[pygame.K_LALT] and not pen_color[0] == 255:
+        pen_color = (pen_color[0] + 1, pen_color[1], pen_color[2])
+
+    if key[pygame.K_2] and not key[pygame.K_LALT] and not pen_color[1] == 255:
+        pen_color = (pen_color[0], pen_color[1] + 1, pen_color[2])
+
+    if key[pygame.K_3] and not key[pygame.K_LALT] and not pen_color[2] == 255:
+        pen_color = (pen_color[0], pen_color[1], pen_color[2] + 1)
+
+    if key[pygame.K_1] and key[pygame.K_LALT] and not pen_color[0] == 0:
+        pen_color = (pen_color[0] - 1, pen_color[1], pen_color[2])
+
+    if key[pygame.K_2] and key[pygame.K_LALT] and not pen_color[1] == 0:
+        pen_color = (pen_color[0], pen_color[1] - 1, pen_color[2])
+
+    if key[pygame.K_3] and key[pygame.K_LALT] and not pen_color[2] == 0:
+        pen_color = (pen_color[0], pen_color[1], pen_color[2] - 1)
+
+    if key[pygame.K_w]:
         camera.y -= round(5 / camera.zoom)
-    if pygame.key.get_pressed()[pygame.K_a]:
+    if key[pygame.K_a]:
         camera.x -= round(5 / camera.zoom)
-    if pygame.key.get_pressed()[pygame.K_s]:
+    if key[pygame.K_s]:
         camera.y += round(5 / camera.zoom)
-    if pygame.key.get_pressed()[pygame.K_d]:
+    if key[pygame.K_d]:
         camera.x += round(5 / camera.zoom)
-    if pygame.key.get_pressed()[pygame.K_q]:
+    if key[pygame.K_q]:
         camera.zoom -= 0.05
-    if pygame.key.get_pressed()[pygame.K_e]:
+    if key[pygame.K_e]:
         camera.zoom += 0.05
 
-    if any(pygame.key.get_pressed()):
+    if any(key):
         for element in ui:
             if element.name == "MenuText":
                 element.set_text(create_menu_text(camera.zoom, camera.x, camera.y, pen_size, pen_color))
+
+            elif element.name == "ColorBar":
+                element.color = pen_color
 
     pressed = pygame.mouse.get_pressed()[0]
     mouse_x, mouse_y = pygame.mouse.get_pos()
@@ -110,7 +142,7 @@ while running:
                 round((old_mouse_y - camera.height / 2) / old_camera_zoom + old_camera_y),
                 round((mouse_x - camera.width / 2) / camera.zoom + camera.x),
                 round((mouse_y - camera.height / 2) / camera.zoom + camera.y),
-                pen_size, (0, 0, 0)
+                pen_size, pen_color
                 ))
 
         else:
@@ -120,7 +152,7 @@ while running:
                 round((mouse_y - camera.height / 2) / camera.zoom + camera.y),
                 round((mouse_x - camera.width / 2) / camera.zoom + camera.x),
                 round((mouse_y - camera.height / 2) / camera.zoom + camera.y),
-                pen_size, (0, 0, 0)
+                pen_size, pen_color
                 ))
             
     was_pressed = pressed
