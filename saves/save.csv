@@ -1,4 +1,4 @@
-x_init,y_init,x,y,radius,red,green,blue
+x_init,y_init,x,y,size,red,green,blue
 627,180,627,180,1,0,0,0
 627,180,627,180,1,0,0,0
 627,180,601,163,1,0,0,0

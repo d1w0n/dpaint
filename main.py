@@ -16,6 +16,9 @@ def create_menu_text(alt_keys, camera_zoom, camera_x, camera_y, pen_size, pen_co
         "Pen Size: " + str(pen_size) + " (Z-/X+), " \
         "Pen Color: " + str(pen_color) + " (1/2/3)-"
 
+print("\n~~~FILES~~~")
+for filename in os.listdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), "saves")):
+    if filename[len(filename) - 4:len(filename)] == ".csv": print(filename)
 save_name = input("\nEnter save file name: ").replace(" ", "_")
 # gets a save file.
 
@@ -53,7 +56,7 @@ if os.path.exists(save_path):
         print("Opening save file (" + save_name + ".csv)")
                 
     except: 
-        print("Save file corrupted. Exiting program. (" + save_name + ".csv")
+        print("Save file corrupted. Exiting program. (" + save_name + ".csv)")
         exit()
 
 else: 
