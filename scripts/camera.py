@@ -6,3 +6,11 @@ class Camera:
         self.width = width
         self.height = height
         self.zoom = zoom
+        self.old_x = x
+        self.old_y = y
+        self.old_zoom = zoom
+
+    def set_old(self):
+        self.old_x = self.x
+        self.old_y = self.y
+        self.old_zoom = self.zoom
