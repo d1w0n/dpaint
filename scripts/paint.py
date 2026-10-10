@@ -15,8 +15,8 @@ class Paint:
         y_init_final = round((self.y_init + y_offset) * camera_zoom + camera_height / 2)
         x_final = round((self.x + x_offset) * camera_zoom + camera_width / 2)
         y_final = round((self.y + y_offset) * camera_zoom + camera_height / 2)
-        end_size_final = round(((self.size / 2) - 1) * camera_zoom) if round(((self.size / 2) - 1) * camera_zoom) >= 1 else 1
-        line_width_final = max(round(self.size * camera_zoom), 2)
+        end_size_final = round(((self.size / 2) - 1) * camera_zoom)
+        line_width_final = max(round(self.size * camera_zoom), 1)
 
         margin = max(end_size_final, line_width_final / 2)
         left   = min(x_init_final, x_final) - margin

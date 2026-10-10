@@ -37,7 +37,7 @@ data = {
     "strokes": 0,
     "camera": Camera(window, 0.0, 0.0, width, height, 1.0),
     "ui": [ Bar(window, 0, 0, width, 25, "MenuBar", (200, 200, 200)) ],
-    "keys": { 'z': False, 'x': False, 'c': False, '\\': False },
+    "keys": { 'z': False, 'x': False, 'c': False, '\\': False, "q": False, "e": False },
     "debug": False
 }
 data["ui"].append(Text(window, 5, 0, "MenuText", create_menu_text(False, data["camera"].zoom, data["camera"].x, data["camera"].y, data["pen"].size, data["pen"].color), 32, (0, 0, 0)))
@@ -86,7 +86,6 @@ while running:
             print("Debug: " + str(data["debug"]) + " (\\)")
 
     else: data["keys"]["\\"] = False
-
     if key[pygame.K_c]: 
         if not data["keys"]["c"]:
             data["keys"]["c"] = True
@@ -101,22 +100,19 @@ while running:
                 data["paint"][data["strokes"]] = data["paint_trash"][data["strokes"]]
                 del data["paint_trash"][data["strokes"]]
 
-    else: data["keys"]["c"] = False
-    
+    else: data["keys"]["c"] = False   
     if key[pygame.K_z] and not data["pen"].size <= 1:
         if not data["keys"]["z"]:
             data["keys"]["z"] = True
             data["pen"].size -= 1
 
     else: data["keys"]["z"] = False
-
     if key[pygame.K_x]:
         if not data["keys"]["x"]:
             data["keys"]["x"] = True
             data["pen"].size += 1
             
     else: data["keys"]["x"] = False
-
     if key[pygame.K_1]: data["pen"].color = (data["pen"].color[0] + ((1 if data["pen"].color[0] < 255 else 0) if not alt_down else (-1 if data["pen"].color[0] > 0 else 0)), 
         data["pen"].color[1], 
         data["pen"].color[2])
@@ -133,9 +129,18 @@ while running:
     if key[pygame.K_a]: data["camera"].x -= 5 / data["camera"].zoom
     if key[pygame.K_s]: data["camera"].y += 5 / data["camera"].zoom
     if key[pygame.K_d]: data["camera"].x += 5 / data["camera"].zoom
-    if key[pygame.K_q]: data["camera"].zoom -= 0.05 if not data["camera"].zoom - 0.05 <= 0 else 0
-    if key[pygame.K_e]: data["camera"].zoom += 0.05
-    
+    if key[pygame.K_q]: 
+        if not data["keys"]["q"]:
+            data["keys"]["q"] = True
+            data["camera"].zoom_preset -= 1
+
+    else: data["keys"]["q"] = False
+    if key[pygame.K_e]: 
+        if not data["keys"]["e"]:
+            data["keys"]["e"] = True
+            data["camera"].zoom_preset += 1
+
+    else: data["keys"]["e"] = False
     for element in data["ui"]:
         if element.name == "MenuText": element.set_text(create_menu_text(alt_down, data["camera"].zoom, data["camera"].x, data["camera"].y, data["pen"].size, data["pen"].color))
         elif element.name == "ColorBar": element.color = data["pen"].color
