@@ -37,7 +37,8 @@ data = {
     "strokes": 0,
     "camera": Camera(window, 0.0, 0.0, width, height, 1.0),
     "ui": [ Bar(window, 0, 0, width, 25, "MenuBar", (200, 200, 200)) ],
-    "keys": { 'z': False, 'x': False, 'c': False }
+    "keys": { 'z': False, 'x': False, 'c': False, '\\': False },
+    "debug": False
 }
 data["ui"].append(Text(window, 5, 0, "MenuText", create_menu_text(False, data["camera"].zoom, data["camera"].x, data["camera"].y, data["pen"].size, data["pen"].color), 32, (0, 0, 0)))
 # initialize program data.
@@ -77,6 +78,15 @@ while running:
         if event.type == pygame.QUIT: running = False
 
     window.fill((255, 255, 255))
+    if key[pygame.K_BACKSLASH]:
+        if not data["keys"]["\\"]:
+            data["keys"]["\\"] = True
+            if not data["debug"]: data["debug"] = True
+            else: data["debug"] = False
+            print("Debug: " + str(data["debug"]) + " (\\)")
+
+    else: data["keys"]["\\"] = False
+
     if key[pygame.K_c]: 
         if not data["keys"]["c"]:
             data["keys"]["c"] = True
@@ -165,7 +175,7 @@ while running:
     for element in data["ui"]:
         if element.name == "MenuBar":
             for stroke in data["paint"].keys():
-                for line in data["paint"][stroke]: line.render(-data["camera"].x, element.height - data["camera"].y, data["camera"].width, data["camera"].height, data["camera"].zoom)
+                for line in data["paint"][stroke]: line.render(-data["camera"].x, element.height - data["camera"].y, data["camera"].width, data["camera"].height, data["camera"].zoom, data["debug"])
     # TODO add frustum culling
     
     for element in data["ui"]: element.render()
