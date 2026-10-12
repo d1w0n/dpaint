@@ -28,6 +28,7 @@ width, height = 1280, 960
 window = pygame.display.set_mode([width, height])
 clock = pygame.time.Clock()
 running = True
+TICKSPEED = 60
 # initialize program variables.
 
 data = {
@@ -125,10 +126,11 @@ while running:
         data["pen"].color[1], 
         data["pen"].color[2] + ((1 if data["pen"].color[2] < 255 else 0) if not alt_down else (-1 if data["pen"].color[2] > 0 else 0)))
 
-    if key[pygame.K_w]: data["camera"].y -= 5 / data["camera"].zoom
-    if key[pygame.K_a]: data["camera"].x -= 5 / data["camera"].zoom
-    if key[pygame.K_s]: data["camera"].y += 5 / data["camera"].zoom
-    if key[pygame.K_d]: data["camera"].x += 5 / data["camera"].zoom
+    if key[pygame.K_w]: data["camera"].y -= data["camera"].SPEED / data["camera"].zoom
+    if key[pygame.K_a]: data["camera"].x -= data["camera"].SPEED / data["camera"].zoom
+    if key[pygame.K_s]: data["camera"].y += data["camera"].SPEED / data["camera"].zoom
+    if key[pygame.K_d]: data["camera"].x += data["camera"].SPEED / data["camera"].zoom
+    
     if key[pygame.K_q]: 
         if not data["keys"]["q"]:
             data["keys"]["q"] = True
@@ -185,7 +187,7 @@ while running:
     
     for element in data["ui"]: element.render()
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(TICKSPEED)
 # end of main loop.
 
 save_data = [["x_init", "y_init", "x", "y", "size", "red", "green", "blue"]]

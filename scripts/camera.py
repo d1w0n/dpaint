@@ -11,6 +11,7 @@ class Camera:
         self.old_zoom = zoom
         self.ZOOM_PRESETS = [0.1, 0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 7.5, 10.0]
         self._zoom_preset = 3
+        self.SPEED = 7
 
     @property
     def zoom_preset(self): return self._zoom_preset
