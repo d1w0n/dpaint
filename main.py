@@ -6,6 +6,18 @@ from scripts.ui import Text, Bar
 from scripts.camera import Camera
 from scripts.pen import Pen
 
+def single_key_press(input, dict, key) -> bool:
+    if input: 
+        if not dict[key]:
+            dict[key] = True
+            return True
+        
+        else: return False
+
+    else: 
+        dict[key] = False
+        return False
+
 def create_menu_text(alt_keys, camera_zoom, camera_x, camera_y, pen_size, pen_color) -> str:
     if not alt_keys: return "Zoom Level: " + str(round(camera_zoom * 100)) + "% (Q-/W+), " \
         "Coordinates: (" + str(round(camera_x)) + ", " + str(round(camera_y)) + ") (WASD), " \
@@ -73,47 +85,39 @@ was_pressed = False
 while running:
     key = pygame.key.get_pressed()
     alt_down = key[pygame.K_LALT] or key[pygame.K_RALT]
+    # get key press values.
 
     if key[pygame.K_ESCAPE]: running = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT: running = False
+    # get program exiting.
 
     window.fill((255, 255, 255))
-    if key[pygame.K_BACKSLASH]:
-        if not data["keys"]["\\"]:
-            data["keys"]["\\"] = True
-            if not data["debug"]: data["debug"] = True
-            else: data["debug"] = False
-            print("Debug: " + str(data["debug"]) + " (\\)")
+    # clears screen.
 
-    else: data["keys"]["\\"] = False
-    if key[pygame.K_c]: 
-        if not data["keys"]["c"]:
-            data["keys"]["c"] = True
-            if not alt_down:
-                if not len(data["paint"]) <= 1:
-                    data["paint_trash"][data["strokes"]] = data["paint"][data["strokes"]]
-                    del data["paint"][data["strokes"]]
-                    data["strokes"] -= 1
+    if single_key_press(key[pygame.K_BACKSLASH], data["keys"], "\\"):
+        if not data["debug"]: data["debug"] = True
+        else: data["debug"] = False
+        print("Debug: " + str(data["debug"]) + " (\\)")
+    # toggles debug.
 
-            elif data["strokes"] + 1 in data["paint_trash"].keys():
-                data["strokes"] += 1
-                data["paint"][data["strokes"]] = data["paint_trash"][data["strokes"]]
-                del data["paint_trash"][data["strokes"]]
+    if single_key_press(key[pygame.K_c], data["keys"], "c"):
+        if not alt_down:
+            if not len(data["paint"]) <= 1:
+                data["paint_trash"][data["strokes"]] = data["paint"][data["strokes"]]
+                del data["paint"][data["strokes"]]
+                data["strokes"] -= 1
+        
+        elif data["strokes"] + 1 in data["paint_trash"].keys():
+            data["strokes"] += 1
+            data["paint"][data["strokes"]] = data["paint_trash"][data["strokes"]]
+            del data["paint_trash"][data["strokes"]]
+    # manages undone paint.
+    
+    if single_key_press(key[pygame.K_z], data["keys"], "z") and not data["pen"].size <= 1: data["pen"].size -= 1
+    if single_key_press(key[pygame.K_x], data["keys"], "x"): data["pen"].size += 1
+    # manages pen size. 
 
-    else: data["keys"]["c"] = False   
-    if key[pygame.K_z] and not data["pen"].size <= 1:
-        if not data["keys"]["z"]:
-            data["keys"]["z"] = True
-            data["pen"].size -= 1
-
-    else: data["keys"]["z"] = False
-    if key[pygame.K_x]:
-        if not data["keys"]["x"]:
-            data["keys"]["x"] = True
-            data["pen"].size += 1
-            
-    else: data["keys"]["x"] = False
     if key[pygame.K_1]: data["pen"].color = (data["pen"].color[0] + ((1 if data["pen"].color[0] < 255 else 0) if not alt_down else (-1 if data["pen"].color[0] > 0 else 0)), 
         data["pen"].color[1], 
         data["pen"].color[2])
@@ -125,32 +129,26 @@ while running:
     if key[pygame.K_3]: data["pen"].color = (data["pen"].color[0], 
         data["pen"].color[1], 
         data["pen"].color[2] + ((1 if data["pen"].color[2] < 255 else 0) if not alt_down else (-1 if data["pen"].color[2] > 0 else 0)))
+    # manages pen colors.
 
     if key[pygame.K_w]: data["camera"].y -= data["camera"].SPEED / data["camera"].zoom
     if key[pygame.K_a]: data["camera"].x -= data["camera"].SPEED / data["camera"].zoom
     if key[pygame.K_s]: data["camera"].y += data["camera"].SPEED / data["camera"].zoom
     if key[pygame.K_d]: data["camera"].x += data["camera"].SPEED / data["camera"].zoom
-    
-    if key[pygame.K_q]: 
-        if not data["keys"]["q"]:
-            data["keys"]["q"] = True
-            data["camera"].zoom_preset -= 1
+    if single_key_press(key[pygame.K_q], data["keys"], "q"): data["camera"].zoom_preset -= 1
+    if single_key_press(key[pygame.K_e], data["keys"], "e"): data["camera"].zoom_preset += 1
+    # update camera position and zoom.
 
-    else: data["keys"]["q"] = False
-    if key[pygame.K_e]: 
-        if not data["keys"]["e"]:
-            data["keys"]["e"] = True
-            data["camera"].zoom_preset += 1
-
-    else: data["keys"]["e"] = False
     for element in data["ui"]:
         if element.name == "MenuText": element.set_text(create_menu_text(alt_down, data["camera"].zoom, data["camera"].x, data["camera"].y, data["pen"].size, data["pen"].color))
         elif element.name == "ColorBar": element.color = data["pen"].color
+    # update ui elements.
 
     pressed = pygame.mouse.get_pressed()[0]
     mouse_x, mouse_y = pygame.mouse.get_pos()
     for element in data["ui"]:
         if element.name == "MenuBar": mouse_y -= element.height
+    # update current tick variables.
 
     if pressed:
         if was_pressed: data["paint"][data["strokes"]].append(Paint(
@@ -174,16 +172,18 @@ while running:
             round((mouse_y - data["camera"].height / 2) / data["camera"].zoom + data["camera"].y),
             data["pen"].size, data["pen"].color
             ))
+    # adds paint.
             
     was_pressed = pressed
     old_mouse_x, old_mouse_y = mouse_x, mouse_y
     data["camera"].set_old()
+    # update last tick variables.
 
     for element in data["ui"]:
         if element.name == "MenuBar":
             for stroke in data["paint"].keys():
                 for line in data["paint"][stroke]: line.render(-data["camera"].x, element.height - data["camera"].y, data["camera"].width, data["camera"].height, data["camera"].zoom, data["debug"])
-    # TODO add frustum culling
+    # paint rendering.
     
     for element in data["ui"]: element.render()
     pygame.display.flip()
