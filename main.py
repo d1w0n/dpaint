@@ -1,6 +1,7 @@
 import pygame
 import csv
 import os
+import math
 from scripts.paint import Paint
 from scripts.ui import Text, Bar
 from scripts.camera import Camera
@@ -40,7 +41,6 @@ width, height = 1280, 960
 window = pygame.display.set_mode([width, height])
 clock = pygame.time.Clock()
 running = True
-TICKSPEED = 60
 # initialize program variables.
 
 data = {
@@ -96,9 +96,22 @@ while running:
     # clears screen.
 
     if single_key_press(key[pygame.K_BACKSLASH], data["keys"], "\\"):
-        if not data["debug"]: data["debug"] = True
-        else: data["debug"] = False
-        print("Debug: " + str(data["debug"]) + " (\\)")
+        if not data["debug"]: 
+            data["debug"] = True
+            data["ui"].append(Text(window, 5, height - 32, "DebugText", "Debug: True", 32, (0, 0, 0)))
+            data["ui"].append(Text(window, 5, height - 64, "FPSText", "", 32, (0, 0, 0)))
+
+        else: 
+            data["debug"] = False
+            _removal_list = []
+            for i in range(len(data["ui"])):
+                if data["ui"][i].name == "DebugText": _removal_list.append(i)
+                elif data["ui"][i].name == "FPSText": _removal_list.append(i)
+
+            _removals = 0
+            for index in _removal_list:
+                data["ui"].pop(index - _removals)
+                _removals += 1
     # toggles debug.
 
     if single_key_press(key[pygame.K_c], data["keys"], "c"):
@@ -185,9 +198,11 @@ while running:
                 for line in data["paint"][stroke]: line.render(-data["camera"].x, element.height - data["camera"].y, data["camera"].width, data["camera"].height, data["camera"].zoom, data["debug"])
     # paint rendering.
     
-    for element in data["ui"]: element.render()
+    for element in data["ui"]: 
+        if data["debug"] and element.name == "FPSText": element.set_text("FPS: " + str(math.floor(clock.get_fps())))
+        element.render()
     pygame.display.flip()
-    clock.tick(TICKSPEED)
+    clock.tick(60) # TODO unlimit
 # end of main loop.
 
 save_data = [["x_init", "y_init", "x", "y", "size", "red", "green", "blue"]]
