@@ -41,6 +41,7 @@ width, height = 1280, 960
 window = pygame.display.set_mode([width, height])
 clock = pygame.time.Clock()
 running = True
+dt = 60
 # initialize program variables.
 
 data = {
@@ -95,6 +96,13 @@ while running:
     window.fill((255, 255, 255))
     # clears screen.
 
+    fps = clock.get_fps()
+    pressed = pygame.mouse.get_pressed()[0]
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+    for element in data["ui"]:
+        if element.name == "MenuBar": mouse_y -= element.height
+    # update current tick variables.
+
     if single_key_press(key[pygame.K_BACKSLASH], data["keys"], "\\"):
         if not data["debug"]: 
             data["debug"] = True
@@ -144,10 +152,11 @@ while running:
         data["pen"].color[2] + ((1 if data["pen"].color[2] < 255 else 0) if not alt_down else (-1 if data["pen"].color[2] > 0 else 0)))
     # manages pen colors.
 
-    if key[pygame.K_w]: data["camera"].y -= data["camera"].SPEED / data["camera"].zoom
-    if key[pygame.K_a]: data["camera"].x -= data["camera"].SPEED / data["camera"].zoom
-    if key[pygame.K_s]: data["camera"].y += data["camera"].SPEED / data["camera"].zoom
-    if key[pygame.K_d]: data["camera"].x += data["camera"].SPEED / data["camera"].zoom
+    step = data["camera"].SPEED / data["camera"].zoom * dt * 60
+    if key[pygame.K_w]: data["camera"].y -= step
+    if key[pygame.K_a]: data["camera"].x -= step
+    if key[pygame.K_s]: data["camera"].y += step
+    if key[pygame.K_d]: data["camera"].x += step
     if single_key_press(key[pygame.K_q], data["keys"], "q"): data["camera"].zoom_preset -= 1
     if single_key_press(key[pygame.K_e], data["keys"], "e"): data["camera"].zoom_preset += 1
     # update camera position and zoom.
@@ -156,12 +165,6 @@ while running:
         if element.name == "MenuText": element.set_text(create_menu_text(alt_down, data["camera"].zoom, data["camera"].x, data["camera"].y, data["pen"].size, data["pen"].color))
         elif element.name == "ColorBar": element.color = data["pen"].color
     # update ui elements.
-
-    pressed = pygame.mouse.get_pressed()[0]
-    mouse_x, mouse_y = pygame.mouse.get_pos()
-    for element in data["ui"]:
-        if element.name == "MenuBar": mouse_y -= element.height
-    # update current tick variables.
 
     if pressed:
         if was_pressed: data["paint"][data["strokes"]].append(Paint(
@@ -199,10 +202,10 @@ while running:
     # paint rendering.
     
     for element in data["ui"]: 
-        if data["debug"] and element.name == "FPSText": element.set_text("FPS: " + str(math.floor(clock.get_fps())))
+        if data["debug"] and element.name == "FPSText": element.set_text("FPS: " + str(math.floor(fps)))
         element.render()
     pygame.display.flip()
-    clock.tick(60) # TODO unlimit
+    dt = clock.tick() / 1000
 # end of main loop.
 
 save_data = [["x_init", "y_init", "x", "y", "size", "red", "green", "blue"]]
