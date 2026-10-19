@@ -20,15 +20,15 @@ def single_key_press(input, dict, key) -> bool:
         return False
 
 def create_menu_text(alt_keys, camera_zoom, camera_x, camera_y, pen_size, pen_color) -> str:
-    if not alt_keys: return "Zoom Level: " + str(round(camera_zoom * 100)) + "% (Q-/W+), " \
-        "Coordinates: (" + str(round(camera_x)) + ", " + str(round(camera_y)) + ") (WASD), " \
-        "Pen Size: " + str(pen_size) + " (Z-/X+), " \
-        "Pen Color: " + str(pen_color) + " (1/2/3)+"
+    if not alt_keys: return "Zoom: " + str(round(camera_zoom * 100)) + "% (Q-/E+), " \
+        "Position: (" + str(round(camera_x)) + ", " + str(round(camera_y)) + ") (WASD), " \
+        "Size: " + str(pen_size) + " (Z-/X+), " \
+        "Color: " + str(pen_color) + " (1/2/3)+" # TODO position should display mouse x, y
     
-    else: return "Zoom Level: " + str(round(camera_zoom * 100)) + "% (Q-/W+), " \
-        "Coordinates: (" + str(round(camera_x)) + ", " + str(round(camera_y)) + ") (WASD), " \
-        "Pen Size: " + str(pen_size) + " (Z-/X+), " \
-        "Pen Color: " + str(pen_color) + " (1/2/3)-"
+    else: return "Zoom: " + str(round(camera_zoom * 100)) + "% (Q-/E+), " \
+        "Position: (" + str(round(camera_x)) + ", " + str(round(camera_y)) + ") (WASD), " \
+        "Size: " + str(pen_size) + " (Z-/X+), " \
+        "Color: " + str(pen_color) + " (1/2/3)-"
     
 print("\n~~~FILES~~~")
 for filename in os.listdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), "saves")):
@@ -41,7 +41,7 @@ width, height = 1280, 960
 window = pygame.display.set_mode([width, height])
 clock = pygame.time.Clock()
 running = True
-dt = 60
+delta_time = 60
 # initialize program variables.
 
 data = {
@@ -135,12 +135,12 @@ while running:
             del data["paint_trash"][data["strokes"]]
     # manages undone paint.
     
-    if single_key_press(key[pygame.K_z], data["keys"], "z") and not data["pen"].size <= 1: data["pen"].size -= 1
+    if single_key_press(key[pygame.K_z], data["keys"], "z") and not data["pen"].size <= 1: data["pen"].size -= 1 # TODO put pen size reducing into alt function
     if single_key_press(key[pygame.K_x], data["keys"], "x"): data["pen"].size += 1
     # manages pen size. 
 
     if key[pygame.K_1]: data["pen"].color = (data["pen"].color[0] + ((1 if data["pen"].color[0] < 255 else 0) if not alt_down else (-1 if data["pen"].color[0] > 0 else 0)), 
-        data["pen"].color[1], 
+        data["pen"].color[1], # TODO also add delta time for these
         data["pen"].color[2])
 
     if key[pygame.K_2]: data["pen"].color = (data["pen"].color[0], 
@@ -152,7 +152,7 @@ while running:
         data["pen"].color[2] + ((1 if data["pen"].color[2] < 255 else 0) if not alt_down else (-1 if data["pen"].color[2] > 0 else 0)))
     # manages pen colors.
 
-    step = data["camera"].SPEED / data["camera"].zoom * dt * 60
+    step = data["camera"].SPEED / data["camera"].zoom * delta_time * 60
     if key[pygame.K_w]: data["camera"].y -= step
     if key[pygame.K_a]: data["camera"].x -= step
     if key[pygame.K_s]: data["camera"].y += step
@@ -205,7 +205,7 @@ while running:
         if data["debug"] and element.name == "FPSText": element.set_text("FPS: " + str(math.floor(fps)))
         element.render()
     pygame.display.flip()
-    dt = clock.tick() / 1000
+    delta_time = clock.tick() / 1000
 # end of main loop.
 
 save_data = [["x_init", "y_init", "x", "y", "size", "red", "green", "blue"]]
