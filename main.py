@@ -2,34 +2,12 @@ import pygame
 import csv
 import os
 import math
-from scripts.paint import Paint
-from scripts.ui import Text, Bar
-from scripts.camera import Camera
-from scripts.pen import Pen
+from scripts.paint import *
+from scripts.ui import *
+from scripts.camera import *
+from scripts.pen import *
+from scripts.functions import *
 
-def single_key_press(input, dict, key) -> bool:
-    if input: 
-        if not dict[key]:
-            dict[key] = True
-            return True
-        
-        else: return False
-
-    else: 
-        dict[key] = False
-        return False
-
-def create_menu_text(alt_keys, camera_zoom, camera_x, camera_y, pen_size, pen_color) -> str:
-    if not alt_keys: return "Zoom: " + str(round(camera_zoom * 100)) + "% (Q-/E+), " \
-        "Position: (" + str(round(camera_x)) + ", " + str(round(camera_y)) + ") (WASD), " \
-        "Size: " + str(pen_size) + " (Z-/X+), " \
-        "Color: " + str(pen_color) + " (1/2/3)+" # TODO position should display mouse x, y
-    
-    else: return "Zoom: " + str(round(camera_zoom * 100)) + "% (Q-/E+), " \
-        "Position: (" + str(round(camera_x)) + ", " + str(round(camera_y)) + ") (WASD), " \
-        "Size: " + str(pen_size) + " (Z-/X+), " \
-        "Color: " + str(pen_color) + " (1/2/3)-"
-    
 print("\n~~~FILES~~~")
 for filename in os.listdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), "saves")):
     if filename[len(filename) - 4:len(filename)] == ".csv": print(filename)
@@ -51,7 +29,7 @@ data = {
     "strokes": 0,
     "camera": Camera(window, 0.0, 0.0, width, height, 1.0),
     "ui": [ Bar(window, 0, 0, width, 25, "MenuBar", (200, 200, 200)) ],
-    "keys": { 'z': False, 'x': False, 'c': False, '\\': False, "q": False, "e": False },
+    "keys": false_dict_constructor("z", "x", "c", "\\", "q", "e"),
     "debug": False
 }
 data["ui"].append(Text(window, 5, 0, "MenuText", create_menu_text(False, data["camera"].zoom, data["camera"].x, data["camera"].y, data["pen"].size, data["pen"].color), 32, (0, 0, 0)))
