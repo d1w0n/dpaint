@@ -16,7 +16,7 @@ while True:
     save_name = input("\nEnter save file name (begin with \'_\' to make hidden, or leave empty to exit)\n>>> ").replace(" ", "_").replace(".csv", "")
     if save_name == "": 
         print("Exiting, goodbye!")
-        exit()
+        break
     # gets a save file.
 
     pygame.init()
