@@ -13,7 +13,7 @@ while True:
     for filename in os.listdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), "saves")):
         if filename[len(filename) - 4:len(filename)] == ".csv" and filename[0:1] != "_": print(filename.replace(".csv", ""), end="\t")
         
-    save_name = input("\nEnter save file name (begin with \'_\' to make hidden, or leave empty to exit)\n>>> ").replace(" ", "_").replace(".csv", "")
+    save_name = input("\nEnter save file name (begin with \'_\' to make hidden, or leave empty to exit)\n>>> ").replace(" ", "-").replace(".csv", "")
     if save_name == "": 
         print("Exiting, goodbye!")
         break

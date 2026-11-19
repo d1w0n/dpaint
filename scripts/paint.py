@@ -19,9 +19,9 @@ class Paint:
         line_width_final = max(round(self.size * camera_zoom), 1)
 
         margin = max(end_size_final, line_width_final / 2)
-        left   = min(x_init_final, x_final) - margin
-        right  = max(x_init_final, x_final) + margin
-        top    = min(y_init_final, y_final) - margin
+        left = min(x_init_final, x_final) - margin
+        right = max(x_init_final, x_final) + margin
+        top = min(y_init_final, y_final) - margin
         bottom = max(y_init_final, y_final) + margin
 
         if right > 0 and left < camera_width and bottom > 0 and top < camera_height:
